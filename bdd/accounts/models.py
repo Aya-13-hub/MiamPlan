@@ -3,5 +3,5 @@ from django.db import models
 
 
 class User(AbstractUser):
-    full_name = models.CharField(max_length=150)
+    full_name = models.CharField(max_length=150,default="")
     email = models.EmailField(unique=True)
