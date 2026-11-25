@@ -1,0 +1,1130 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+:root {
+  --mp-primary-green: #5DB31B;
+  --mp-dark-green: #0B5B2A;
+  --mp-page-bg: #F4F9EE;
+  --mp-col-bg: #E1F2D2;
+  --mp-card-bg: #FFFFFF;
+  --mp-text-dark: #1E293B;
+  --mp-text-muted: #52606D;
+  --mp-border-light: #D5E0CC;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.mp-plan-layout,
+.mp-plan-layout * {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.mp-plan-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--mp-page-bg);
+  color: var(--mp-text-dark);
+}
+
+/* الشريط الجانبي مطابق لـ Ingredients.css */
+.mp-plan-sidebar {
+  width: 245px;
+  min-width: 245px;
+  background-color: var(--mp-primary-green);
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 14px 22px;
+}
+
+.mp-plan-brand-box {
+  background: transparent;
+  padding: 4px 4px 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mp-plan-logo-img {
+  max-width: 190px;
+  max-height: 70px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.mp-plan-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mp-plan-nav-btn {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mp-plan-nav-btn span {
+  white-space: nowrap;
+}
+
+.mp-plan-nav-btn:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+.mp-plan-nav-btn.active {
+  background-color: rgba(255, 255, 255, 0.22);
+  font-weight: 700;
+}
+
+.mp-plan-nav-icon {
+  width: 35px !important;
+  height: 35px !important;
+  min-width: 35px !important;
+  max-width: 35px !important;
+  max-height: 35px !important;
+  object-fit: contain;
+  border-radius: 5px;
+  display: block;
+  flex-shrink: 0;
+}
+
+.mp-plan-sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding-top: 16px;
+}
+
+.mp-plan-user {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: left;
+  gap: 10px;
+  padding: 0 6px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.mp-plan-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #FFFFFF;
+  flex-shrink: 0;
+}
+
+.mp-plan-user-name {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.mp-plan-user-role {
+  font-size: 12px;
+  font-weight: 400;
+  opacity: 0.92;
+}
+
+.mp-plan-logout {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 14.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.mp-plan-logout:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+.mp-plan-logout-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+/* المحتوى الرئيسي */
+.mp-plan-main {
+  flex: 1;
+  padding: 28px 34px 40px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mp-plan-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.mp-plan-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 6px;
+}
+
+.mp-plan-bell-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mp-plan-bell-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.mp-plan-top-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.mp-plan-title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: #0B5B2A;
+  line-height: 1.2;
+}
+
+.mp-plan-subtitle {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--mp-text-muted);
+}
+
+.mp-plan-week-bar {
+  background-color: #FFFFFF;
+  border: 1px solid var(--mp-border-light);
+  border-radius: 16px;
+  padding: 15px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.mp-plan-week-nav {
+  border: none;
+  background: transparent;
+  color: #0B5B2A;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mp-plan-week-label {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.mp-plan-week-label-btn {
+  border: 1px dashed transparent;
+  background: transparent;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  padding: 5px 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.mp-plan-week-label-btn:hover {
+  border-color: #8BB870;
+  background-color: #F4F9EE;
+  color: #0B5B2A;
+}
+
+.mp-plan-week-edit-hint {
+  font-size: 13px;
+  color: #5DB31B;
+}
+
+.mp-plan-week-edit-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mp-plan-week-input {
+  height: 36px;
+  min-width: 260px;
+  border: 1.5px solid #5DB31B;
+  border-radius: 999px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1E293B;
+  outline: none;
+}
+
+.mp-plan-week-save-btn {
+  height: 34px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background-color: #5DB31B;
+  color: #FFFFFF;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mp-plan-mode-switch {
+  display: inline-flex;
+  align-items: stretch;
+  justify-content: center;
+  margin: 0 auto 18px;
+  width: fit-content;
+  background-color: #FFFFFF;
+  border: 1px solid var(--mp-border-light);
+  border-radius: 999px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.mp-plan-mode-btn {
+  border: none;
+  background: transparent;
+  color: #0B5B2A;
+  font-size: 15.5px;
+  font-weight: 700;
+  padding: 11px 30px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.2;
+}
+
+.mp-plan-mode-btn.active {
+  background-color: var(--mp-primary-green);
+  color: #FFFFFF;
+  border-radius: 999px;
+}
+
+.mp-plan-options-bar {
+  background-color: #FFFFFF;
+  border: 1px solid var(--mp-border-light);
+  border-radius: 16px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.mp-plan-options-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mp-plan-options-label {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #0B5B2A;
+  margin-right: 4px;
+}
+
+.mp-plan-check-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 15px;
+  border-radius: 999px;
+  border: 1px solid #CBD5E1;
+  background-color: #FFFFFF;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mp-plan-check-pill input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.mp-plan-custom-check {
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
+  border: 1.5px solid #94A3B8;
+  background-color: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.mp-plan-check-pill input[type="checkbox"]:checked + .mp-plan-custom-check {
+  background-color: #5DB31B;
+  border-color: #5DB31B;
+}
+
+.mp-plan-check-pill input[type="checkbox"]:checked + .mp-plan-custom-check::after {
+  content: "";
+  width: 5px;
+  height: 9px;
+  border: solid #FFFFFF;
+  border-width: 0 2.2px 2.2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
+.mp-plan-generate-btn {
+  border: none;
+  background-color: var(--mp-primary-green);
+  color: #FFFFFF;
+  border-radius: 999px;
+  padding: 11px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.mp-plan-generate-btn:hover {
+  opacity: 0.94;
+}
+
+.mp-plan-toast {
+  align-self: flex-end;
+  background-color: #E1F2D2;
+  border: 1px solid #8BB870;
+  color: #0B5B2A;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.mp-plan-utility-icons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-right: 6px;
+}
+
+.mp-plan-util-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.mp-plan-util-btn:hover {
+  background-color: rgba(93, 179, 27, 0.12);
+}
+
+.mp-plan-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(125px, 1fr));
+  gap: 12px;
+  overflow-x: auto;
+}
+
+.mp-plan-day-col {
+  background-color: var(--mp-col-bg);
+  border-radius: 20px;
+  padding: 14px 10px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mp-plan-day-title {
+  margin: 0 0 12px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0B5B2A;
+}
+
+.mp-plan-slot-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0B5B2A;
+  margin: 8px 0 7px;
+}
+
+.mp-plan-manual-stack {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mp-plan-meal-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.mp-plan-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 108px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.mp-plan-manual-stack .mp-plan-img-wrap {
+  height: 82px;
+}
+
+.mp-plan-meal-badge {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #334155;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  z-index: 2;
+}
+
+.mp-plan-meal-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mp-plan-meal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.mp-plan-meal-name {
+  flex: 1;
+  text-align: center;
+  background-color: #FFFFFF;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #334155;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mp-plan-refresh-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: #475569;
+}
+
+/* بطاقة + Ajouter في وضع Planning manuel */
+.mp-plan-manual-add-card {
+  width: 100%;
+  height: 112px;
+  border-radius: 14px;
+  border: 1.5px dashed #8BB870;
+  background-color: #DCEFD0;
+  color: #4A6B3A;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-bottom: 4px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.mp-plan-manual-add-card.compact {
+  height: 40px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.mp-plan-manual-add-card:hover {
+  background-color: #CFE6C2;
+  border-color: #5DB31B;
+  color: #0B5B2A;
+}
+
+.mp-plan-bottom-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 22px;
+}
+
+/* واجهة Ajouter une recette */
+.mp-rec-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.mp-rec-title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: #0B5B2A;
+  line-height: 1.2;
+}
+
+.mp-rec-subtitle {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--mp-text-muted);
+}
+
+.mp-rec-back-btn {
+  background-color: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: #1E293B;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mp-rec-form-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.mp-rec-left-col,
+.mp-rec-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mp-rec-dropzone {
+  border: 1.5px dashed #77B943;
+  border-radius: 16px;
+  padding: 24px 18px;
+  background-color: #EFF7E6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  min-height: 210px;
+}
+
+.mp-rec-preview-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.mp-rec-drop-icon {
+  font-size: 28px;
+}
+
+.mp-rec-drop-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.mp-rec-drop-sub {
+  font-size: 12px;
+  color: #64748B;
+}
+
+.mp-rec-browse-btn {
+  margin-top: 4px;
+  background-color: var(--mp-primary-green);
+  color: #FFFFFF;
+  border-radius: 999px;
+  padding: 8px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mp-rec-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mp-rec-label {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.mp-rec-textarea {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid #CBD5E1;
+  background-color: #FFFFFF;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #334155;
+  resize: vertical;
+}
+
+.mp-rec-rating-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mp-rec-rating-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.mp-rec-stars {
+  display: flex;
+  gap: 6px;
+}
+
+.mp-rec-star {
+  border: none;
+  background: transparent;
+  font-size: 26px;
+  color: #CBD5E1;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.mp-rec-star.active {
+  color: #F59E0B;
+}
+
+.mp-rec-comment-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 999px;
+  padding: 8px 14px;
+}
+
+.mp-rec-comment-pill input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 12.5px;
+  color: #334155;
+}
+
+.mp-rec-input-pill {
+  width: 100%;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid #CBD5E1;
+  background-color: #FFFFFF;
+  padding: 0 16px;
+  font-size: 13.5px;
+  color: #1E293B;
+  outline: none;
+}
+
+.mp-rec-short-input {
+  max-width: 180px;
+}
+
+.mp-rec-two-cols {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.mp-rec-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mp-rec-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background-color: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 13px;
+  color: #334155;
+  cursor: pointer;
+}
+
+.mp-rec-chip input[type="checkbox"] {
+  accent-color: #5DB31B;
+}
+
+.mp-rec-ing-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mp-rec-ing-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mp-rec-ing-qty,
+.mp-rec-ing-unit {
+  width: 72px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid #CBD5E1;
+  background-color: #FFFFFF;
+  text-align: center;
+  font-size: 13px;
+  color: #334155;
+}
+
+.mp-rec-ing-name {
+  flex: 1;
+  min-width: 180px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid #CBD5E1;
+  background-color: #FFFFFF;
+  padding: 0 14px;
+  font-size: 13px;
+  color: #334155;
+}
+
+.mp-rec-ing-del {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid #CBD5E1;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.mp-rec-trash-img {
+  width: 17px;
+  height: 17px;
+  object-fit: contain;
+  display: block;
+}
+
+.mp-rec-add-ing-btn {
+  align-self: flex-start;
+  margin-top: 4px;
+  border: none;
+  background-color: var(--mp-primary-green);
+  color: #FFFFFF;
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mp-rec-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.mp-rec-cancel-btn {
+  background-color: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: #1E293B;
+  border-radius: 999px;
+  padding: 11px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mp-rec-save-btn {
+  background-color: var(--mp-primary-green);
+  border: none;
+  color: #FFFFFF;
+  border-radius: 999px;
+  padding: 11px 26px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+  .mp-rec-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* إعدادات الطباعة وتصدير PDF مع الحفاظ على الألوان الخلفية */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    size: landscape;
+    margin: 8mm;
+  }
+
+  body {
+    background-color: #F4F9EE !important;
+  }
+
+  .mp-plan-no-print {
+    display: none !important;
+  }
+
+  .mp-plan-layout {
+    display: block !important;
+    min-height: auto !important;
+    background-color: #F4F9EE !important;
+  }
+
+  .mp-plan-main {
+    padding: 8px 12px !important;
+  }
+
+  .mp-plan-week-bar {
+    background-color: #FFFFFF !important;
+    border-color: #D5E0CC !important;
+    margin-bottom: 12px !important;
+  }
+
+  .mp-plan-days-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    overflow: visible !important;
+  }
+
+  .mp-plan-day-col {
+    background-color: #E1F2D2 !important;
+    border-radius: 14px !important;
+    padding: 10px 6px 12px !important;
+    break-inside: avoid;
+  }
+
+  .mp-plan-meal-name {
+    background-color: #FFFFFF !important;
+  }
+
+  .mp-plan-meal-badge {
+    background-color: rgba(255, 255, 255, 0.92) !important;
+  }
+}
+.mp-plan-lock-badge {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  padding: 2px 6px;
+  font-size: 11px;
+  cursor: pointer;
+  z-index: 2;
+  line-height: 1.2;
+}
+
+.mp-plan-lock-badge.locked {
+  background-color: #0B5B2A;
+  color: #FFFFFF;
+}
+
+.mp-plan-card-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.mp-plan-action-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.mp-plan-validated-badge {
+  background-color: #E1F2D2;
+  color: #0B5B2A;
+  border: 1px solid #8BB870;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mp-plan-validate-btn {
+  border: 1px solid #5DB31B;
+  background-color: #FFFFFF;
+  color: #0B5B2A;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mp-plan-validate-btn:hover,
+.mp-plan-validate-btn.validated {
+  background-color: #5DB31B;
+  color: #FFFFFF;
+}
+
+.mp-plan-dup-popover {
+  width: 100%;
+  background-color: #FFFFFF;
+  border: 1px solid #8BB870;
+  border-radius: 12px;
+  padding: 8px;
+  margin-top: 4px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  z-index: 5;
+}
+
+.mp-plan-dup-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0B5B2A;
+  margin-bottom: 6px;
+}
+
+.mp-plan-dup-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mp-plan-dup-day {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 10.5px;
+}
+
+.mp-plan-dup-day-name {
+  font-weight: 700;
+  color: #334155;
+  min-width: 28px;
+}
+
+.mp-plan-dup-target-btn {
+  border: 1px solid #D5E0CC;
+  background-color: #F4F9EE;
+  color: #0B5B2A;
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mp-plan-dup-target-btn:hover {
+  background-color: #5DB31B;
+  color: #FFFFFF;
+}
