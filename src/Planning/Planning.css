@@ -267,6 +267,62 @@
   color: #475569;
 }
 
+.mp-plan-week-label-btn {
+  border: 1px dashed transparent;
+  background: transparent;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  padding: 5px 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.mp-plan-week-label-btn:hover {
+  border-color: #8BB870;
+  background-color: #F4F9EE;
+  color: #0B5B2A;
+}
+
+.mp-plan-week-edit-hint {
+  font-size: 13px;
+  color: #5DB31B;
+}
+
+.mp-plan-week-edit-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mp-plan-week-input {
+  height: 36px;
+  min-width: 260px;
+  border: 1.5px solid #5DB31B;
+  border-radius: 999px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1E293B;
+  outline: none;
+}
+
+.mp-plan-week-save-btn {
+  height: 34px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background-color: #5DB31B;
+  color: #FFFFFF;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .mp-plan-mode-switch {
   display: inline-flex;
   align-items: stretch;
@@ -394,6 +450,18 @@
   opacity: 0.94;
 }
 
+.mp-plan-toast {
+  align-self: flex-end;
+  background-color: #E1F2D2;
+  border: 1px solid #8BB870;
+  color: #0B5B2A;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
 .mp-plan-utility-icons {
   display: flex;
   justify-content: flex-end;
@@ -410,6 +478,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.mp-plan-util-btn:hover {
+  background-color: rgba(93, 179, 27, 0.12);
 }
 
 .mp-plan-days-grid {
@@ -446,12 +520,19 @@
   margin: 8px 0 7px;
 }
 
+.mp-plan-manual-stack {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .mp-plan-meal-card {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  margin-bottom: 6px;
+  gap: 6px;
+  margin-bottom: 2px;
 }
 
 .mp-plan-img-wrap {
@@ -461,6 +542,10 @@
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.mp-plan-manual-stack .mp-plan-img-wrap {
+  height: 82px;
 }
 
 .mp-plan-meal-badge {
@@ -512,6 +597,8 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  font-size: 12px;
+  color: #475569;
 }
 
 /* بطاقة + Ajouter في وضع Planning manuel */
@@ -528,8 +615,14 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.mp-plan-manual-add-card.compact {
+  height: 40px;
+  border-radius: 10px;
+  font-size: 12px;
 }
 
 .mp-plan-manual-add-card:hover {
@@ -807,6 +900,7 @@
   justify-content: center;
   padding: 0;
 }
+
 .mp-rec-trash-img {
   width: 17px;
   height: 17px;
@@ -860,4 +954,177 @@
   .mp-rec-form-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* إعدادات الطباعة وتصدير PDF مع الحفاظ على الألوان الخلفية */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    size: landscape;
+    margin: 8mm;
+  }
+
+  body {
+    background-color: #F4F9EE !important;
+  }
+
+  .mp-plan-no-print {
+    display: none !important;
+  }
+
+  .mp-plan-layout {
+    display: block !important;
+    min-height: auto !important;
+    background-color: #F4F9EE !important;
+  }
+
+  .mp-plan-main {
+    padding: 8px 12px !important;
+  }
+
+  .mp-plan-week-bar {
+    background-color: #FFFFFF !important;
+    border-color: #D5E0CC !important;
+    margin-bottom: 12px !important;
+  }
+
+  .mp-plan-days-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    overflow: visible !important;
+  }
+
+  .mp-plan-day-col {
+    background-color: #E1F2D2 !important;
+    border-radius: 14px !important;
+    padding: 10px 6px 12px !important;
+    break-inside: avoid;
+  }
+
+  .mp-plan-meal-name {
+    background-color: #FFFFFF !important;
+  }
+
+  .mp-plan-meal-badge {
+    background-color: rgba(255, 255, 255, 0.92) !important;
+  }
+}
+.mp-plan-lock-badge {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  padding: 2px 6px;
+  font-size: 11px;
+  cursor: pointer;
+  z-index: 2;
+  line-height: 1.2;
+}
+
+.mp-plan-lock-badge.locked {
+  background-color: #0B5B2A;
+  color: #FFFFFF;
+}
+
+.mp-plan-card-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.mp-plan-action-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.mp-plan-validated-badge {
+  background-color: #E1F2D2;
+  color: #0B5B2A;
+  border: 1px solid #8BB870;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mp-plan-validate-btn {
+  border: 1px solid #5DB31B;
+  background-color: #FFFFFF;
+  color: #0B5B2A;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mp-plan-validate-btn:hover,
+.mp-plan-validate-btn.validated {
+  background-color: #5DB31B;
+  color: #FFFFFF;
+}
+
+.mp-plan-dup-popover {
+  width: 100%;
+  background-color: #FFFFFF;
+  border: 1px solid #8BB870;
+  border-radius: 12px;
+  padding: 8px;
+  margin-top: 4px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  z-index: 5;
+}
+
+.mp-plan-dup-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0B5B2A;
+  margin-bottom: 6px;
+}
+
+.mp-plan-dup-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mp-plan-dup-day {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 10.5px;
+}
+
+.mp-plan-dup-day-name {
+  font-weight: 700;
+  color: #334155;
+  min-width: 28px;
+}
+
+.mp-plan-dup-target-btn {
+  border: 1px solid #D5E0CC;
+  background-color: #F4F9EE;
+  color: #0B5B2A;
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mp-plan-dup-target-btn:hover {
+  background-color: #5DB31B;
+  color: #FFFFFF;
 }

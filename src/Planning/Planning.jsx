@@ -28,6 +28,9 @@ import planningIcon from "../Ingredients/Rectangle 8040.svg";
 import profilIcon from "../Ingredients/Rectangle 8041.svg";
 import logoutIcon from "../Ingredients/Rectangle 8147.svg";
 
+const MAX_ITEMS_PER_SLOT = 3;
+const DEFAULT_COURSE_TAGS = ["Entrée", "Plat", "Dessert"];
+
 const DAYS = [
   "Dimanche",
   "Lundi",
@@ -38,53 +41,116 @@ const DAYS = [
   "Samedi",
 ];
 
-const INITIAL_MEALS = {
-  Dimanche: {
-    dejeuner: { tag: "Plat", title: "Mtewem", img: mtewemImg },
-    dinner: { tag: "Entrée", title: "Tacos", img: tacosImg },
-  },
-  Lundi: {
-    dejeuner: { tag: "Entrée", title: "Samosas", img: samosasImg },
-    dinner: { tag: "Plat", title: "Lasagnes", img: lasagnesImg },
-  },
-  Mardi: {
-    dejeuner: { tag: "Plat", title: "Pasta", img: pastaImg },
-    dinner: { tag: "Plat", title: "Ramen", img: ramenImg },
-  },
-  Mercredi: {
-    dejeuner: { tag: "Entrée", title: "Poivron farci", img: poivronFarciImg },
-    dinner: { tag: "Plat", title: "Pizza Pepperoni", img: pizzaPepperoniImg },
-  },
-  Jeudi: {
-    dejeuner: { tag: "Plat", title: "Tortilla", img: tortillaImg },
-    dinner: { tag: "Plat", title: "Poulet au curry", img: pouletCurryImg },
-  },
-  Vendredi: {
-    dejeuner: { tag: "Plat", title: "Couscous", img: couscousImg },
-    dinner: { tag: "Entrée", title: "Sushi", img: suchiImg },
-  },
-  Samedi: {
-    dejeuner: { tag: "Plat", title: "Rechta", img: rechtaImg },
-    dinner: { tag: "Plat", title: "Paella", img: paellaImg },
-  },
-};
+const SLOTS = [
+  { key: "dejeuner", label: "Déjeuner" },
+  { key: "dinner", label: "Dinner" },
+];
 
 const RANDOM_POOL = [
-  { tag: "Plat", title: "Mtewem", img: mtewemImg },
-  { tag: "Entrée", title: "Tacos", img: tacosImg },
-  { tag: "Entrée", title: "Samosas", img: samosasImg },
-  { tag: "Plat", title: "Lasagnes", img: lasagnesImg },
-  { tag: "Plat", title: "Pasta", img: pastaImg },
-  { tag: "Plat", title: "Ramen", img: ramenImg },
-  { tag: "Entrée", title: "Poivron farci", img: poivronFarciImg },
-  { tag: "Plat", title: "Pizza Pepperoni", img: pizzaPepperoniImg },
-  { tag: "Plat", title: "Tortilla", img: tortillaImg },
-  { tag: "Plat", title: "Poulet au curry", img: pouletCurryImg },
-  { tag: "Plat", title: "Couscous", img: couscousImg },
-  { tag: "Entrée", title: "Sushi", img: suchiImg },
-  { tag: "Plat", title: "Rechta", img: rechtaImg },
-  { tag: "Plat", title: "Paella", img: paellaImg },
+  { tag: "Plat", title: "Mtewem", img: mtewemImg, vegetarian: false },
+  { tag: "Entrée", title: "Tacos", img: tacosImg, vegetarian: false },
+  { tag: "Entrée", title: "Samosas", img: samosasImg, vegetarian: true },
+  { tag: "Plat", title: "Lasagnes", img: lasagnesImg, vegetarian: false },
+  { tag: "Plat", title: "Pasta", img: pastaImg, vegetarian: true },
+  { tag: "Plat", title: "Ramen", img: ramenImg, vegetarian: false },
+  { tag: "Entrée", title: "Poivron farci", img: poivronFarciImg, vegetarian: true },
+  { tag: "Plat", title: "Pizza Pepperoni", img: pizzaPepperoniImg, vegetarian: false },
+  { tag: "Plat", title: "Tortilla", img: tortillaImg, vegetarian: true },
+  { tag: "Plat", title: "Poulet au curry", img: pouletCurryImg, vegetarian: false },
+  { tag: "Plat", title: "Couscous", img: couscousImg, vegetarian: false },
+  { tag: "Entrée", title: "Sushi", img: suchiImg, vegetarian: false },
+  { tag: "Plat", title: "Rechta", img: rechtaImg, vegetarian: false },
+  { tag: "Plat", title: "Paella", img: paellaImg, vegetarian: false },
 ];
+
+function getFilteredPool(opts) {
+  const selectedTypes = [];
+  if (opts.entree) selectedTypes.push("Entrée");
+  if (opts.plat) selectedTypes.push("Plat");
+  if (opts.dessert) selectedTypes.push("Dessert");
+
+  let pool = RANDOM_POOL;
+
+  if (selectedTypes.length > 0) {
+    const byType = pool.filter((item) => selectedTypes.includes(item.tag));
+    if (byType.length > 0) {
+      pool = byType;
+    }
+  }
+
+  if (opts.vegetarien) {
+    const byVeg = pool.filter((item) => item.vegetarian);
+    if (byVeg.length > 0) {
+      pool = byVeg;
+    } else {
+      const anyVeg = RANDOM_POOL.filter((item) => item.vegetarian);
+      if (anyVeg.length > 0) {
+        pool = anyVeg;
+      }
+    }
+  }
+
+  return pool.length > 0 ? pool : RANDOM_POOL;
+}
+
+function collectRecentTitles(mealsObj) {
+  const titles = new Set();
+  DAYS.forEach((day) => {
+    ["dejeuner", "dinner"].forEach((slot) => {
+      const t = mealsObj?.[day]?.[slot]?.title;
+      if (t) titles.add(t);
+    });
+  });
+  return titles;
+}
+
+function pickCandidateFromPool(pool, recentTitles, avoidRecent, excludeTitle = null) {
+  let candidates = pool.filter((m) => m.title !== excludeTitle);
+  if (candidates.length === 0) candidates = pool;
+
+  if (avoidRecent && recentTitles.size > 0) {
+    const fresh = candidates.filter((m) => !recentTitles.has(m.title));
+    if (fresh.length > 0) {
+      candidates = fresh;
+    }
+  }
+
+  return candidates[Math.floor(Math.random() * candidates.length)] || pool[0];
+}
+
+function buildWeekMeals(opts, existingMeals = {}, lockedSlots = {}, avoidRecent = false) {
+  const pool = getFilteredPool(opts);
+  const recentTitles = avoidRecent ? collectRecentTitles(existingMeals) : new Set();
+  const usedInCurrentRun = new Set();
+  const next = {};
+
+  DAYS.forEach((day, idx) => {
+    next[day] = {};
+    ["dejeuner", "dinner"].forEach((slot, sIdx) => {
+      const slotId = `${day}-${slot}`;
+      if (lockedSlots[slotId] && existingMeals?.[day]?.[slot]) {
+        next[day][slot] = { ...existingMeals[day][slot] };
+        return;
+      }
+
+      const combinedRecent = new Set([
+        ...(avoidRecent ? recentTitles : []),
+        ...(avoidRecent ? usedInCurrentRun : []),
+      ]);
+
+      const fallbackItem = pool[(idx * 2 + sIdx) % pool.length];
+      const chosen =
+        avoidRecent
+          ? pickCandidateFromPool(pool, combinedRecent, true, existingMeals?.[day]?.[slot]?.title)
+          : fallbackItem;
+
+      usedInCurrentRun.add(chosen.title);
+      next[day][slot] = { ...chosen };
+    });
+  });
+
+  return next;
+}
 
 const EMPTY_RECIPE_FORM = {
   nom: "",
@@ -125,8 +191,8 @@ function CoursesNavIcon() {
 function RefreshSmallIcon() {
   return (
     <svg
-      width="15"
-      height="15"
+      width="14"
+      height="14"
       viewBox="0 0 24 24"
       fill="none"
       stroke="#0B5B2A"
@@ -217,17 +283,36 @@ function PrintIcon() {
 export default function Planning() {
   const [activeNav, setActiveNav] = useState("planning");
   const [mode, setMode] = useState("aleatoire");
-  const [meals, setMeals] = useState(INITIAL_MEALS);
-  const [manualMeals, setManualMeals] = useState({});
-  const [targetSlot, setTargetSlot] = useState(null); // { day, slot }
-  const [showAddRecipe, setShowAddRecipe] = useState(false);
-  const [recipeForm, setRecipeForm] = useState(EMPTY_RECIPE_FORM);
   const [options, setOptions] = useState({
     entree: true,
     plat: true,
     dessert: false,
     vegetarien: false,
   });
+  const [avoidRecent, setAvoidRecent] = useState(false); // SCRUM-62
+  const [lockedItems, setLockedItems] = useState({}); // SCRUM-61: { [idOrKey]: true }
+  const [menuValidated, setMenuValidated] = useState(false); // SCRUM-63
+  const [duplicateMenuKey, setDuplicateMenuKey] = useState(null); // SCRUM-35
+
+  const [meals, setMeals] = useState(() =>
+    buildWeekMeals({
+      entree: true,
+      plat: true,
+      dessert: false,
+      vegetarien: false,
+    })
+  );
+  const [manualMeals, setManualMeals] = useState({});
+
+  // SCRUM-36: دعم التعديل على عنصر قائم أو إضافة عنصر جديد
+  const [targetSlot, setTargetSlot] = useState(null); // { day, slot, editItemId? }
+  const [showAddRecipe, setShowAddRecipe] = useState(false);
+  const [recipeForm, setRecipeForm] = useState(EMPTY_RECIPE_FORM);
+
+  const [shareFeedback, setShareFeedback] = useState("");
+  const [weekLabel, setWeekLabel] = useState("Semaine du 20 - 26 Novembre 2026");
+  const [isEditingWeek, setIsEditingWeek] = useState(false);
+  const [weekDraft, setWeekDraft] = useState("Semaine du 20 - 26 Novembre 2026");
 
   const navItems = useMemo(
     () => [
@@ -241,16 +326,101 @@ export default function Planning() {
     []
   );
 
-  const toggleOption = (key) => {
-    setOptions((prev) => ({ ...prev, [key]: !prev[key] }));
+  const showToast = (msg) => {
+    setShareFeedback(msg);
+    setTimeout(() => {
+      setShareFeedback((current) => (current === msg ? "" : current));
+    }, 3000);
   };
 
+  const toggleOption = (key) => {
+    setMenuValidated(false);
+    setOptions((prev) => {
+      const nextOptions = { ...prev, [key]: !prev[key] };
+      setMeals((currMeals) =>
+        buildWeekMeals(nextOptions, currMeals, lockedItems, avoidRecent)
+      );
+      return nextOptions;
+    });
+  };
+
+  const toggleAvoidRecent = () => {
+    setAvoidRecent((prev) => {
+      const nextAvoid = !prev;
+      if (nextAvoid) {
+        setMeals((currMeals) =>
+          buildWeekMeals(options, currMeals, lockedItems, true)
+        );
+      }
+      return nextAvoid;
+    });
+  };
+
+  const toggleLock = (lockKey) => {
+    setLockedItems((prev) => ({
+      ...prev,
+      [lockKey]: !prev[lockKey],
+    }));
+  };
+
+  const startEditingWeek = () => {
+    setWeekDraft(weekLabel);
+    setIsEditingWeek(true);
+  };
+
+  const commitWeekLabel = () => {
+    const cleaned = weekDraft.trim();
+    if (cleaned) {
+      setWeekLabel(cleaned);
+      setMenuValidated(false);
+    }
+    setIsEditingWeek(false);
+  };
+
+  const handleWeekKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      commitWeekLabel();
+    } else if (e.key === "Escape") {
+      setIsEditingWeek(false);
+    }
+  };
+
+  const shiftWeek = (direction) => {
+    const match = weekLabel.match(
+      /^(.*?)\s*(\d{1,2})\s*-\s*(\d{1,2})\s+([A-Za-zÀ-ÿ]+)\s+(\d{4})$/
+    );
+    if (!match) {
+      startEditingWeek();
+      return;
+    }
+
+    const [, prefix, startDayStr, endDayStr, monthName, yearStr] = match;
+    const startDay = parseInt(startDayStr, 10);
+    const endDay = parseInt(endDayStr, 10);
+    const delta = direction * 7;
+
+    const nextStart = Math.max(1, Math.min(31, startDay + delta));
+    const nextEnd = Math.max(1, Math.min(31, endDay + delta));
+
+    setWeekLabel(`${prefix} ${nextStart} - ${nextEnd} ${monthName} ${yearStr}`.trim());
+    setMenuValidated(false);
+  };
+
+  // SCRUM-59 + احترام SCRUM-61 (القفل) و SCRUM-62 (تجنب الأطباق الحديثة)
   const replaceMeal = (day, slot) => {
+    const lockKey = `random-${day}-${slot}`;
+    if (lockedItems[lockKey]) {
+      showToast("Ce plat est verrouillé (SCRUM-61).");
+      return;
+    }
+
+    setMenuValidated(false);
+    const pool = getFilteredPool(options);
     setMeals((prev) => {
       const currentTitle = prev[day][slot]?.title;
-      const candidates = RANDOM_POOL.filter((m) => m.title !== currentTitle);
-      const pick =
-        candidates[Math.floor(Math.random() * candidates.length)] || RANDOM_POOL[0];
+      const recentTitles = avoidRecent ? collectRecentTitles(prev) : new Set();
+      const pick = pickCandidateFromPool(pool, recentTitles, avoidRecent, currentTitle);
       return {
         ...prev,
         [day]: {
@@ -261,23 +431,99 @@ export default function Planning() {
     });
   };
 
+  // SCRUM-53 / SCRUM-57 + احترام SCRUM-61 و SCRUM-62
   const regenerateAll = () => {
-    const next = {};
-    DAYS.forEach((day, idx) => {
-      const dItem = RANDOM_POOL[(idx * 2) % RANDOM_POOL.length];
-      const nItem = RANDOM_POOL[(idx * 2 + 1) % RANDOM_POOL.length];
-      next[day] = {
-        dejeuner: { ...dItem },
-        dinner: { ...nItem },
-      };
-    });
-    setMeals(next);
+    setMenuValidated(false);
+    setMeals((prev) => buildWeekMeals(options, prev, lockedItems, avoidRecent));
   };
 
+  // SCRUM-63: اعتماد / تثبيت القائمة الحالية
+  const handleValidateMenu = () => {
+    setMenuValidated(true);
+    setDuplicateMenuKey(null);
+    showToast("Menu validé avec succès !");
+  };
+
+  // فتح نموذج إضافة وصفة جديدة لخانة
   const openAddRecipeForSlot = (day, slot) => {
-    setTargetSlot({ day, slot });
-    setRecipeForm(EMPTY_RECIPE_FORM);
+    const existingList = manualMeals[day]?.[slot] || [];
+    const suggestedTag = DEFAULT_COURSE_TAGS[existingList.length] || "Plat";
+    setDuplicateMenuKey(null);
+    setTargetSlot({ day, slot, editItemId: null });
+    setRecipeForm({
+      ...EMPTY_RECIPE_FORM,
+      types: [suggestedTag],
+    });
     setShowAddRecipe(true);
+  };
+
+  // SCRUM-36: فتح نموذج تعديل وجبة قائمة بالفعل
+  const openEditRecipeItem = (day, slot, item) => {
+    setDuplicateMenuKey(null);
+    setTargetSlot({ day, slot, editItemId: item.id });
+    setRecipeForm({
+      ...EMPTY_RECIPE_FORM,
+      nom: item.title || "",
+      imagePreview: item.img || "",
+      types: item.tag ? [item.tag] : ["Plat"],
+      temps: item.temps || "30",
+      calories: item.calories || "1 kcal",
+      regimes: item.regimes || [],
+      allergies: item.allergies || [],
+      methode: item.methode || EMPTY_RECIPE_FORM.methode,
+      ingredients: item.ingredients || EMPTY_RECIPE_FORM.ingredients,
+      rating: item.rating || 0,
+      commentaire: item.commentaire || "",
+    });
+    setShowAddRecipe(true);
+  };
+
+  // SCRUM-35: تكرار نفس الطبق إلى يوم/وجبة أخرى
+  const handleDuplicateItemTo = (sourceItem, targetDay, targetSlotKey) => {
+    setMenuValidated(false);
+    setDuplicateMenuKey(null);
+
+    if (mode === "aleatoire") {
+      const lockKey = `random-${targetDay}-${targetSlotKey}`;
+      if (lockedItems[lockKey]) {
+        showToast("La case cible est verrouillée.");
+        return;
+      }
+      setMeals((prev) => ({
+        ...prev,
+        [targetDay]: {
+          ...prev[targetDay],
+          [targetSlotKey]: {
+            tag: sourceItem.tag,
+            title: sourceItem.title,
+            img: sourceItem.img,
+            vegetarian: Boolean(sourceItem.vegetarian),
+          },
+        },
+      }));
+      showToast(`"${sourceItem.title}" dupliqué vers ${targetDay} (${targetSlotKey === "dejeuner" ? "Déjeuner" : "Dinner"}).`);
+      return;
+    }
+
+    setManualMeals((prev) => {
+      const list = prev[targetDay]?.[targetSlotKey] || [];
+      if (list.length >= MAX_ITEMS_PER_SLOT) {
+        showToast(`Maximum ${MAX_ITEMS_PER_SLOT} éléments par repas.`);
+        return prev;
+      }
+      const cloned = {
+        ...sourceItem,
+        id: Date.now() + Math.floor(Math.random() * 1000),
+      };
+      return {
+        ...prev,
+        [targetDay]: {
+          ...(prev[targetDay] || {}),
+          [targetSlotKey]: [...list, cloned],
+        },
+      };
+    });
+    showToast(`"${sourceItem.title}" dupliqué vers ${targetDay} (${targetSlotKey === "dejeuner" ? "Déjeuner" : "Dinner"}).`);
   };
 
   const toggleArrayField = (field, value) => {
@@ -328,21 +574,59 @@ export default function Planning() {
     e.preventDefault();
     if (!targetSlot) return;
 
+    const { day, slot, editItemId } = targetSlot;
+    const existingList = manualMeals[day]?.[slot] || [];
     const cleanTitle = recipeForm.nom.trim() || "Nouvelle recette";
-    const chosenTag = recipeForm.types[0] || "Plat";
+    const chosenTag =
+      recipeForm.types[0] ||
+      DEFAULT_COURSE_TAGS[existingList.length] ||
+      "Plat";
     const chosenImg = recipeForm.imagePreview || mtewemImg;
 
-    setManualMeals((prev) => ({
-      ...prev,
-      [targetSlot.day]: {
-        ...(prev[targetSlot.day] || {}),
-        [targetSlot.slot]: {
-          tag: chosenTag,
-          title: cleanTitle,
-          img: chosenImg,
+    const payload = {
+      tag: chosenTag,
+      title: cleanTitle,
+      img: chosenImg,
+      temps: recipeForm.temps,
+      calories: recipeForm.calories,
+      regimes: recipeForm.regimes,
+      allergies: recipeForm.allergies,
+      methode: recipeForm.methode,
+      ingredients: recipeForm.ingredients,
+      rating: recipeForm.rating,
+      commentaire: recipeForm.commentaire,
+    };
+
+    setMenuValidated(false);
+
+    if (editItemId) {
+      setManualMeals((prev) => {
+        const list = prev[day]?.[slot] || [];
+        return {
+          ...prev,
+          [day]: {
+            ...(prev[day] || {}),
+            [slot]: list.map((item) =>
+              item.id === editItemId ? { ...item, ...payload } : item
+            ),
+          },
+        };
+      });
+    } else {
+      if (existingList.length >= MAX_ITEMS_PER_SLOT) {
+        setShowAddRecipe(false);
+        setTargetSlot(null);
+        return;
+      }
+
+      setManualMeals((prev) => ({
+        ...prev,
+        [day]: {
+          ...(prev[day] || {}),
+          [slot]: [...existingList, { id: Date.now(), ...payload }],
         },
-      },
-    }));
+      }));
+    }
 
     setShowAddRecipe(false);
     setTargetSlot(null);
@@ -353,10 +637,23 @@ export default function Planning() {
     setTargetSlot(null);
   };
 
-  const handleClearManualMeal = (day, slot) => {
+  const handleRemoveManualMealItem = (day, slot, itemId) => {
+    const lockKey = `manual-${itemId}`;
+    if (lockedItems[lockKey]) {
+      showToast("Ce plat est verrouillé (SCRUM-61).");
+      return;
+    }
+
+    setMenuValidated(false);
     setManualMeals((prev) => {
+      const existingList = prev[day]?.[slot] || [];
+      const filtered = existingList.filter((item) => item.id !== itemId);
       const updatedDay = { ...(prev[day] || {}) };
-      delete updatedDay[slot];
+      if (filtered.length > 0) {
+        updatedDay[slot] = filtered;
+      } else {
+        delete updatedDay[slot];
+      }
       return {
         ...prev,
         [day]: updatedDay,
@@ -364,71 +661,219 @@ export default function Planning() {
     });
   };
 
+  const handleSharePlanning = async () => {
+    const summaryLines = DAYS.map((day) => {
+      if (mode === "aleatoire") {
+        const d = meals[day]?.dejeuner?.title || "-";
+        const n = meals[day]?.dinner?.title || "-";
+        return `${day}: Déjeuner (${d}) | Dinner (${n})`;
+      }
+      const dList =
+        (manualMeals[day]?.dejeuner || [])
+          .map((m) => `${m.tag}: ${m.title}`)
+          .join(", ") || "-";
+      const nList =
+        (manualMeals[day]?.dinner || [])
+          .map((m) => `${m.tag}: ${m.title}`)
+          .join(", ") || "-";
+      return `${day}: Déjeuner [${dList}] | Dinner [${nList}]`;
+    });
+
+    const shareText = `Planning Hebdomadaire (${weekLabel}) - MiamPlan:\n${summaryLines.join("\n")}`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "Planning Hebdomadaire - MiamPlan",
+          text: shareText,
+          url: window.location.href,
+        });
+        showToast("Planning partagé avec succès !");
+        return;
+      }
+    } catch (err) {
+      if (err?.name === "AbortError") return;
+    }
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareText);
+        showToast("Planning copié dans le presse-papiers !");
+      } else {
+        showToast("Partage prêt (lien copié).");
+      }
+    } catch {
+      showToast("Impossible de copier automatiquement le planning.");
+    }
+  };
+
+  const renderDuplicatePopover = (menuKey, sourceItem) => {
+    if (duplicateMenuKey !== menuKey) return null;
+
+    return (
+      <div className="mp-plan-dup-popover mp-plan-no-print" onClick={(e) => e.stopPropagation()}>
+        <div className="mp-plan-dup-title">Dupliquer vers :</div>
+        <div className="mp-plan-dup-grid">
+          {DAYS.map((targetDay) => (
+            <div key={targetDay} className="mp-plan-dup-day">
+              <span className="mp-plan-dup-day-name">{targetDay.slice(0, 3)}</span>
+              {SLOTS.map((s) => (
+                <button
+                  key={s.key}
+                  type="button"
+                  className="mp-plan-dup-target-btn"
+                  onClick={() => handleDuplicateItemTo(sourceItem, targetDay, s.key)}
+                >
+                  {s.key === "dejeuner" ? "Déj" : "Din"}
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   const renderSlotContent = (day, slotKey) => {
     if (mode === "aleatoire") {
       const item = meals[day][slotKey];
+      const lockKey = `random-${day}-${slotKey}`;
+      const isLocked = Boolean(lockedItems[lockKey]);
+      const menuKey = `dup-random-${day}-${slotKey}`;
+
       return (
         <div className="mp-plan-meal-card">
           <div className="mp-plan-img-wrap">
             <span className="mp-plan-meal-badge">{item.tag}</span>
+            <button
+              type="button"
+              className={`mp-plan-lock-badge mp-plan-no-print ${isLocked ? "locked" : ""}`}
+              onClick={() => toggleLock(lockKey)}
+              title={isLocked ? "Déverrouiller ce plat" : "Verrouiller ce plat"}
+            >
+              {isLocked ? "🔒" : "🔓"}
+            </button>
             <img src={item.img} alt={item.title} className="mp-plan-meal-img" />
           </div>
+
           <div className="mp-plan-meal-footer">
             <span className="mp-plan-meal-name">{item.title}</span>
-            <button
-              type="button"
-              className="mp-plan-refresh-btn"
-              onClick={() => replaceMeal(day, slotKey)}
-              title="Changer le repas"
-            >
-              <RefreshSmallIcon />
-            </button>
+            <div className="mp-plan-card-actions mp-plan-no-print">
+              <button
+                type="button"
+                className="mp-plan-refresh-btn"
+                onClick={() =>
+                  setDuplicateMenuKey((curr) => (curr === menuKey ? null : menuKey))
+                }
+                title="Dupliquer ce plat"
+              >
+                ⧉
+              </button>
+              <button
+                type="button"
+                className="mp-plan-refresh-btn"
+                onClick={() => replaceMeal(day, slotKey)}
+                title="Changer le repas"
+              >
+                <RefreshSmallIcon />
+              </button>
+            </div>
           </div>
+          {renderDuplicatePopover(menuKey, item)}
         </div>
       );
     }
 
-    const manualItem = manualMeals[day]?.[slotKey];
-    if (manualItem) {
-      return (
-        <div className="mp-plan-meal-card">
-          <div className="mp-plan-img-wrap">
-            <span className="mp-plan-meal-badge">{manualItem.tag}</span>
-            <img
-              src={manualItem.img}
-              alt={manualItem.title}
-              className="mp-plan-meal-img"
-            />
-          </div>
-          <div className="mp-plan-meal-footer">
-            <span className="mp-plan-meal-name">{manualItem.title}</span>
-            <button
-              type="button"
-              className="mp-plan-refresh-btn"
-              onClick={() => handleClearManualMeal(day, slotKey)}
-              title="Retirer le repas"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      );
-    }
+    const manualList = manualMeals[day]?.[slotKey] || [];
+    const canAddMore = manualList.length < MAX_ITEMS_PER_SLOT;
 
     return (
-      <button
-        type="button"
-        className="mp-plan-manual-add-card"
-        onClick={() => openAddRecipeForSlot(day, slotKey)}
-      >
-        + Ajouter
-      </button>
+      <div className="mp-plan-manual-stack">
+        {manualList.map((manualItem) => {
+          const lockKey = `manual-${manualItem.id}`;
+          const isLocked = Boolean(lockedItems[lockKey]);
+          const menuKey = `dup-manual-${manualItem.id}`;
+
+          return (
+            <div key={manualItem.id} className="mp-plan-meal-card">
+              <div className="mp-plan-img-wrap">
+                <span className="mp-plan-meal-badge">{manualItem.tag}</span>
+                <button
+                  type="button"
+                  className={`mp-plan-lock-badge mp-plan-no-print ${isLocked ? "locked" : ""}`}
+                  onClick={() => toggleLock(lockKey)}
+                  title={isLocked ? "Déverrouiller ce plat" : "Verrouiller ce plat"}
+                >
+                  {isLocked ? "🔒" : "🔓"}
+                </button>
+                <img
+                  src={manualItem.img}
+                  alt={manualItem.title}
+                  className="mp-plan-meal-img"
+                />
+              </div>
+
+              <div className="mp-plan-meal-footer">
+                <span className="mp-plan-meal-name">{manualItem.title}</span>
+                <div className="mp-plan-card-actions mp-plan-no-print">
+                  <button
+                    type="button"
+                    className="mp-plan-refresh-btn"
+                    onClick={() => openEditRecipeItem(day, slotKey, manualItem)}
+                    title="Modifier ce repas"
+                  >
+                    ✎
+                  </button>
+                  <button
+                    type="button"
+                    className="mp-plan-refresh-btn"
+                    onClick={() =>
+                      setDuplicateMenuKey((curr) => (curr === menuKey ? null : menuKey))
+                    }
+                    title="Dupliquer ce repas"
+                  >
+                    ⧉
+                  </button>
+                  <button
+                    type="button"
+                    className="mp-plan-refresh-btn"
+                    onClick={() =>
+                      handleRemoveManualMealItem(day, slotKey, manualItem.id)
+                    }
+                    title="Retirer cet élément"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+              {renderDuplicatePopover(menuKey, manualItem)}
+            </div>
+          );
+        })}
+
+        {canAddMore && (
+          <button
+            type="button"
+            className={`mp-plan-manual-add-card mp-plan-no-print ${
+              manualList.length > 0 ? "compact" : ""
+            }`}
+            onClick={() => openAddRecipeForSlot(day, slotKey)}
+            title={
+              manualList.length === 0
+                ? "Ajouter un plat (Entrée, Plat ou Dessert)"
+                : "Ajouter un élément supplémentaire (Entrée, Plat ou Dessert)"
+            }
+          >
+            + Ajouter
+          </button>
+        )}
+      </div>
     );
   };
 
   return (
-    <div className="mp-plan-layout">
-      <aside className="mp-plan-sidebar">
+    <div className="mp-plan-layout" onClick={() => setDuplicateMenuKey(null)}>
+      <aside className="mp-plan-sidebar mp-plan-no-print">
         <div>
           <div className="mp-plan-brand-box">
             <img src={logoImg} alt="MiamPlan" className="mp-plan-logo-img" />
@@ -478,7 +923,9 @@ export default function Planning() {
         <main className="mp-plan-main mp-rec-main">
           <div className="mp-rec-header">
             <div>
-              <h1 className="mp-rec-title">Ajouter une recette</h1>
+              <h1 className="mp-rec-title">
+                {targetSlot?.editItemId ? "Modifier la recette" : "Ajouter une recette"}
+              </h1>
               <p className="mp-rec-subtitle">
                 Créez, personnalisez et cuisinez vos plats préférés
               </p>
@@ -715,7 +1162,11 @@ export default function Planning() {
                         onClick={() => handleDeleteIngredient(ing.id)}
                         title="Supprimer"
                       >
-                        <img src={deleteTrashIcon} alt="Supprimer" className="mp-rec-trash-img" />
+                        <img
+                          src={deleteTrashIcon}
+                          alt="Supprimer"
+                          className="mp-rec-trash-img"
+                        />
                       </button>
                     </div>
                   ))}
@@ -739,7 +1190,9 @@ export default function Planning() {
                   Annuler
                 </button>
                 <button type="submit" className="mp-rec-save-btn">
-                  Enregistrer la recette
+                  {targetSlot?.editItemId
+                    ? "Mettre à jour"
+                    : "Enregistrer la recette"}
                 </button>
               </div>
             </div>
@@ -755,7 +1208,7 @@ export default function Planning() {
               </p>
             </div>
 
-            <div className="mp-plan-top-actions">
+            <div className="mp-plan-top-actions mp-plan-no-print">
               <button
                 type="button"
                 className="mp-plan-bell-btn"
@@ -768,18 +1221,56 @@ export default function Planning() {
           </div>
 
           <div className="mp-plan-week-bar">
-            <button type="button" className="mp-plan-week-nav">
+            <button
+              type="button"
+              className="mp-plan-week-nav mp-plan-no-print"
+              onClick={() => shiftWeek(-1)}
+            >
               &lt; &nbsp; Semaine précédente
             </button>
-            <div className="mp-plan-week-label">
-              Semaine du 20 - 26 Novembre 2026
-            </div>
-            <button type="button" className="mp-plan-week-nav">
+
+            {isEditingWeek ? (
+              <div className="mp-plan-week-edit-wrap">
+                <input
+                  type="text"
+                  className="mp-plan-week-input"
+                  value={weekDraft}
+                  autoFocus
+                  onChange={(e) => setWeekDraft(e.target.value)}
+                  onBlur={commitWeekLabel}
+                  onKeyDown={handleWeekKeyDown}
+                  placeholder="Ex: Semaine du 27 Nov - 03 Déc 2026"
+                />
+                <button
+                  type="button"
+                  className="mp-plan-week-save-btn mp-plan-no-print"
+                  onClick={commitWeekLabel}
+                >
+                  OK
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="mp-plan-week-label-btn"
+                onClick={startEditingWeek}
+                title="Cliquez pour modifier la période de la semaine"
+              >
+                <span>{weekLabel}</span>
+                <span className="mp-plan-week-edit-hint mp-plan-no-print">✎</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              className="mp-plan-week-nav mp-plan-no-print"
+              onClick={() => shiftWeek(1)}
+            >
               Semaine suivante &nbsp; &gt;
             </button>
           </div>
 
-          <div className="mp-plan-mode-switch">
+          <div className="mp-plan-mode-switch mp-plan-no-print">
             <button
               type="button"
               className={`mp-plan-mode-btn ${
@@ -801,7 +1292,7 @@ export default function Planning() {
           </div>
 
           {mode === "aleatoire" && (
-            <div className="mp-plan-options-bar">
+            <div className="mp-plan-options-bar mp-plan-no-print">
               <div className="mp-plan-options-left">
                 <span className="mp-plan-options-label">Option:</span>
 
@@ -844,6 +1335,16 @@ export default function Planning() {
                   <span className="mp-plan-custom-check" />
                   <span>Végétarien</span>
                 </label>
+
+                <label className="mp-plan-check-pill">
+                  <input
+                    type="checkbox"
+                    checked={avoidRecent}
+                    onChange={toggleAvoidRecent}
+                  />
+                  <span className="mp-plan-custom-check" />
+                  <span>Éviter récents</span>
+                </label>
               </div>
 
               <button
@@ -856,18 +1357,43 @@ export default function Planning() {
             </div>
           )}
 
-          <div className="mp-plan-utility-icons">
-            <button type="button" className="mp-plan-util-btn" title="Partager">
-              <ShareIcon />
-            </button>
+          {shareFeedback && (
+            <div className="mp-plan-toast mp-plan-no-print" role="status">
+              {shareFeedback}
+            </div>
+          )}
+
+          <div className="mp-plan-action-toolbar mp-plan-no-print">
+            {menuValidated && (
+              <span className="mp-plan-validated-badge">Menu validé ✓</span>
+            )}
+
             <button
               type="button"
-              className="mp-plan-util-btn"
-              title="Imprimer"
-              onClick={() => window.print()}
+              className={`mp-plan-validate-btn ${menuValidated ? "validated" : ""}`}
+              onClick={handleValidateMenu}
             >
-              <PrintIcon />
+              {menuValidated ? "Validé ✓" : "Valider le menu"}
             </button>
+
+            <div className="mp-plan-utility-icons">
+              <button
+                type="button"
+                className="mp-plan-util-btn"
+                title="Partager"
+                onClick={handleSharePlanning}
+              >
+                <ShareIcon />
+              </button>
+              <button
+                type="button"
+                className="mp-plan-util-btn"
+                title="Imprimer"
+                onClick={() => window.print()}
+              >
+                <PrintIcon />
+              </button>
+            </div>
           </div>
 
           <div className="mp-plan-days-grid">
@@ -891,7 +1417,7 @@ export default function Planning() {
           </div>
 
           {mode === "aleatoire" && (
-            <div className="mp-plan-bottom-bar">
+            <div className="mp-plan-bottom-bar mp-plan-no-print">
               <button
                 type="button"
                 className="mp-plan-generate-btn"
