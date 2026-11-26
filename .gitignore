@@ -1,3 +1,4 @@
 pycache/
 *.py[cod]
 bdd/db.sqlite3
+venv/

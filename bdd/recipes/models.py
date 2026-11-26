@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+from datetime import timedelta
 
 # Recettes
 class Recipe(models.Model):
@@ -50,7 +50,7 @@ class Recipe(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -76,7 +76,7 @@ class Ingredient(models.Model):
         default='autre'
     )
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -110,7 +110,7 @@ class RecipeIngredient(models.Model):
             )
         ]
 
-    def str(self):
+    def __str__(self):
         return f'{self.ingredient.name} - {self.recipe.name}'
 
 
@@ -118,7 +118,7 @@ class RecipeIngredient(models.Model):
 class Diet(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -126,7 +126,7 @@ class Diet(models.Model):
 class Allergen(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -154,7 +154,7 @@ class FavoriteRecipe(models.Model):
             )
         ]
 
-    def str(self):
+    def __str__(self):
         return f'{self.user} - {self.recipe.name}'
 
 
@@ -189,7 +189,7 @@ class RecipeReview(models.Model):
             )
         ]
 
-    def str(self):
+    def __str__(self):
         return f'{self.user} - {self.recipe.name}'
 
 
@@ -225,7 +225,7 @@ class UserIngredientStock(models.Model):
             )
         ]
 
-    def str(self):
+    def __str__(self):
         return f'{self.user} - {self.ingredient.name}'
 
 
@@ -249,7 +249,7 @@ class WeeklyPlan(models.Model):
             )
         ]
 
-    def str(self):
+    def __str__(self):
         return f'{self.user} - {self.start_date}'
 
 
@@ -287,7 +287,7 @@ class PlannedMeal(models.Model):
             )
         ]
 
-    def str(self):
+    def __str__(self):
         return f'{self.date} - {self.get_meal_type_display()}'
 
 
@@ -301,7 +301,7 @@ class ShoppingList(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def str(self):
+    def __str__(self):
         return f'Liste de courses - {self.user}'
 
 
@@ -336,6 +336,6 @@ class ShoppingListItem(models.Model):
     unit = models.CharField(max_length=30, blank=True)
     is_checked = models.BooleanField(default=False)
 
-    def str(self):
+    def __str__(self):
         return self.custom_name or (
             self.ingredient.name if self.ingredient else 'Article')
