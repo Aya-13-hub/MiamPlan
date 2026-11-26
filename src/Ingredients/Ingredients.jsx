@@ -55,7 +55,7 @@ function CoursesIcon() {
   );
 }
 
-export default function Ingredients() {
+export default function Ingredients({ onNavigate, onLogout } = {}) {
   const [activeNav, setActiveNav] = useState("ingredients");
   const [ingredients, setIngredients] = useState(INITIAL_INGREDIENTS);
   const [selectedCategory, setSelectedCategory] = useState("Tous");
@@ -147,7 +147,12 @@ export default function Ingredients() {
                 className={`mp-ing-nav-btn ${
                   activeNav === item.id ? "active" : ""
                 }`}
-                onClick={() => setActiveNav(item.id)}
+                onClick={() => {
+                  setActiveNav(item.id);
+                  if (onNavigate && item.id !== "ingredients") {
+                    onNavigate(item.id);
+                  }
+                }}
               >
                 {item.customIcon ? (
                   item.customIcon
@@ -169,7 +174,14 @@ export default function Ingredients() {
             </div>
           </div>
 
-          <button type="button" className="mp-ing-logout">
+          <button
+            type="button"
+            className="mp-ing-logout"
+            onClick={() => {
+              if (onLogout) onLogout();
+              else if (onNavigate) onNavigate("home");
+            }}
+          >
             <img src={logoutIcon} alt="" className="mp-ing-logout-icon" />
             <span>Déconnexion</span>
           </button>

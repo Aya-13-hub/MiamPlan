@@ -1,0 +1,147 @@
+/* ============================================================
+   RecipeCard — MiamPlan
+   ============================================================ */
+
+.mp-rcard {
+  background: var(--mp-surface, #ffffff);
+  border: 1px solid var(--mp-border, #e5ede2);
+  border-radius: 18px;
+  box-shadow: var(--mp-shadow, 0 4px 16px rgba(24, 88, 45, 0.05));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.mp-rcard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(24, 88, 45, 0.12);
+  border-color: var(--mp-green-primary, #52a416);
+}
+
+.mp-rcard:focus-visible {
+  outline: 2px solid var(--mp-green-primary, #52a416);
+  outline-offset: 2px;
+}
+
+.mp-rcard__image-wrap {
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--mp-surface-muted, #f1f4ef);
+}
+
+.mp-rcard__image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.38s ease;
+}
+
+.mp-rcard:hover .mp-rcard__image {
+  transform: scale(1.05);
+}
+
+.mp-rcard__category {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #1b3a26;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.mp-rcard__fav {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.92);
+  color: #647868;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.mp-rcard__fav:hover {
+  transform: scale(1.1);
+  background: #ffffff;
+  color: #e05252;
+}
+
+.mp-rcard__fav--active {
+  color: #e05252;
+}
+
+.mp-rcard__body {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mp-rcard__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--mp-text, #1b3a26);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mp-rcard__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mp-rcard__tag {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--mp-surface-muted, #f1f4ef);
+  color: var(--mp-green-deep, #18582d);
+  border: 1px solid var(--mp-border, #e5ede2);
+}
+
+.mp-rcard__meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--mp-border, #e5ede2);
+}
+
+.mp-rcard__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--mp-text-muted, #647868);
+}
+
+.mp-rcard__rating {
+  margin-left: auto;
+  color: #d98218;
+}
