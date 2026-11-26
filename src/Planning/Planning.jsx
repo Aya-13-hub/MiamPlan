@@ -280,7 +280,7 @@ function PrintIcon() {
   );
 }
 
-export default function Planning() {
+export default function Planning({ onNavigate, onLogout } = {}) {
   const [activeNav, setActiveNav] = useState("planning");
   const [mode, setMode] = useState("aleatoire");
   const [options, setOptions] = useState({
@@ -890,6 +890,9 @@ export default function Planning() {
                 onClick={() => {
                   setActiveNav(item.id);
                   setShowAddRecipe(false);
+                  if (onNavigate && item.id !== "planning") {
+                    onNavigate(item.id);
+                  }
                 }}
               >
                 {item.customIcon ? (
@@ -912,7 +915,14 @@ export default function Planning() {
             </div>
           </div>
 
-          <button type="button" className="mp-plan-logout">
+          <button
+            type="button"
+            className="mp-plan-logout"
+            onClick={() => {
+              if (onLogout) onLogout();
+              else if (onNavigate) onNavigate("home");
+            }}
+          >
             <img src={logoutIcon} alt="" className="mp-plan-logout-icon" />
             <span>Déconnexion</span>
           </button>

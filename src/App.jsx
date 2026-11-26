@@ -4,13 +4,18 @@ import logo from './logo.png';
 import salad from './salad.png';
 import topVector from './Vector.png';
 
-function App() {
+function App({
+  initialIsLogin = true,
+  initialScreen = 'auth',
+  onAuthSuccess,
+  onModeChange,
+} = {}) {
   // 'auth' لصفحة Connexion / Inscription، و 'reset' لمسار استعادة كلمة المرور
-  const [screenMode, setScreenMode] = useState('auth');
+  const [screenMode, setScreenMode] = useState(initialScreen);
   // خطوات استعادة كلمة المرور: 'email' | 'code' | 'password' | 'done'
   const [resetStep, setResetStep] = useState('email');
 
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -53,6 +58,18 @@ function App() {
   const backToLogin = () => {
     setIsLogin(true);
     setScreenMode('auth');
+    onModeChange?.('login');
+  };
+
+  const switchAuthTab = (loginMode) => {
+    setIsLogin(loginMode);
+    setScreenMode('auth');
+    onModeChange?.(loginMode ? 'login' : 'register');
+  };
+
+  const handleAuthSubmit = (e) => {
+    e.preventDefault();
+    onAuthSuccess?.();
   };
 
   const handleSendResetLink = (e) => {
@@ -161,14 +178,14 @@ function App() {
                 <button
                   type="button"
                   className={`tab-btn ${isLogin ? 'active' : ''}`}
-                  onClick={() => setIsLogin(true)}
+                  onClick={() => switchAuthTab(true)}
                 >
                   Connexion
                 </button>
                 <button
                   type="button"
                   className={`tab-btn ${!isLogin ? 'active' : ''}`}
-                  onClick={() => setIsLogin(false)}
+                  onClick={() => switchAuthTab(false)}
                 >
                   Inscription
                 </button>
@@ -181,7 +198,7 @@ function App() {
                     <p className="card-subtitle">Connectez-vous pour accéder à votre espace.</p>
                   </div>
 
-                  <form onSubmit={(e) => e.preventDefault()} autoComplete="off">
+                  <form onSubmit={handleAuthSubmit} autoComplete="off">
                     <div className="form-group">
                       <div className="input-wrapper">
                         <svg className="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -249,7 +266,7 @@ function App() {
 
                   <div className="divider">Ou</div>
 
-                  <button type="button" className="google-btn">
+                  <button type="button" className="google-btn" onClick={() => onAuthSuccess?.()}>
                     <svg className="google-icon" viewBox="0 0 24 24">
                       <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z" />
                       <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.17 21.32 7.23 24 12 24z" />
@@ -261,7 +278,7 @@ function App() {
 
                   <div className="card-footer">
                     Vous n'avez pas de compte ?{' '}
-                    <span className="signup-link" onClick={() => setIsLogin(false)}>
+                    <span className="signup-link" onClick={() => switchAuthTab(false)}>
                       Inscrivez-vous
                     </span>
                   </div>
@@ -273,7 +290,7 @@ function App() {
                     <p className="card-subtitle">Créez votre compte pour planifier vos repas</p>
                   </div>
 
-                  <form onSubmit={(e) => e.preventDefault()} autoComplete="off">
+                  <form onSubmit={handleAuthSubmit} autoComplete="off">
                     <div className="form-group">
                       <div className="input-wrapper">
                         <svg className="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -372,7 +389,7 @@ function App() {
 
                   <div className="card-footer">
                     Vous avez déjà un compte ?{' '}
-                    <span className="signup-link" onClick={() => setIsLogin(true)}>
+                    <span className="signup-link" onClick={() => switchAuthTab(true)}>
                       Connectez-vous
                     </span>
                   </div>

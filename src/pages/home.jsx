@@ -93,9 +93,38 @@ const recipes = [
 /* ════════════════════════════════════════════════════════════════
    Home Page
    ════════════════════════════════════════════════════════════════ */
-function Home() {
+function Home({ onNavigate }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
+
+  const goToDashboard = () => {
+    if (onNavigate) {
+      onNavigate("dashboard");
+      return;
+    }
+    window.history.pushState({}, "", "/dashboard");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  };
+
+  const goToLogin = (e) => {
+    if (e) e.preventDefault();
+    if (onNavigate) {
+      onNavigate("login");
+      return;
+    }
+    window.history.pushState({}, "", "/login");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  };
+
+  const goToRegister = (e) => {
+    if (e) e.preventDefault();
+    if (onNavigate) {
+      onNavigate("register");
+      return;
+    }
+    window.history.pushState({}, "", "/register");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  };
 
   return (
     <div className="home-page">
@@ -124,23 +153,33 @@ function Home() {
           <a href="#recettes" onClick={closeMenu}>
             Recettes
           </a>
+          <a
+            href="#dashboard"
+            onClick={(e) => {
+              e.preventDefault();
+              closeMenu();
+              goToDashboard();
+            }}
+          >
+            Tableau de bord
+          </a>
 
           {/* connexion/inscription inside mobile menu */}
           <div className="mobile-auth">
-            <a href="/login" className="btn-connexion">
+            <a href="/login" className="btn-connexion" onClick={goToLogin}>
               Connexion
             </a>
-            <a href="/register" className="btn-inscription">
+            <a href="/register" className="btn-inscription" onClick={goToRegister}>
               Inscription
             </a>
           </div>
         </nav>
 
         <div className="auth-buttons">
-          <a href="/login" className="btn-connexion">
+          <a href="/login" className="btn-connexion" onClick={goToLogin}>
             Connexion
           </a>
-          <a href="/register" className="btn-inscription">
+          <a href="/register" className="btn-inscription" onClick={goToRegister}>
             Inscription
           </a>
         </div>
@@ -188,11 +227,15 @@ function Home() {
             </div>
 
             <div className="hero-actions">
-              <a href="#fonctions" className="btn-primary">
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={goToDashboard}
+              >
                 Commencer gratuitement
                 <ArrowRightIcon size={18} />
-              </a>
-              <a href="/login" className="btn-link">
+              </button>
+              <a href="/login" className="btn-link" onClick={goToLogin}>
                 J&apos;ai déjà un compte
               </a>
             </div>
@@ -312,10 +355,14 @@ function Home() {
               <span className="section-tag">Nos recettes</span>
               <h2 className="recipes-title">Inspirations de la semaine</h2>
             </div>
-            <a href="#recettes" className="btn-primary btn-sm">
+            <button
+              type="button"
+              className="btn-primary btn-sm"
+              onClick={goToDashboard}
+            >
               Découvrir notre application
               <ArrowRightIcon size={16} />
-            </a>
+            </button>
           </div>
 
           <div className="recipes-grid">

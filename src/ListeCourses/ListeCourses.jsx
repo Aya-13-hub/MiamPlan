@@ -50,7 +50,7 @@ function CoursesNavIcon() {
   );
 }
 
-export default function ListeCourses() {
+export default function ListeCourses({ onNavigate, onLogout } = {}) {
   const [activeNav, setActiveNav] = useState("courses");
   const [items, setItems] = useState(INITIAL_ITEMS);
   const [quickInput, setQuickInput] = useState("");
@@ -129,7 +129,12 @@ export default function ListeCourses() {
                 className={`mp-lc-nav-btn ${
                   activeNav === item.id ? "active" : ""
                 }`}
-                onClick={() => setActiveNav(item.id)}
+                onClick={() => {
+                  setActiveNav(item.id);
+                  if (onNavigate && item.id !== "courses") {
+                    onNavigate(item.id);
+                  }
+                }}
               >
                 {item.customIcon ? (
                   item.customIcon
@@ -151,7 +156,14 @@ export default function ListeCourses() {
             </div>
           </div>
 
-          <button type="button" className="mp-lc-logout">
+          <button
+            type="button"
+            className="mp-lc-logout"
+            onClick={() => {
+              if (onLogout) onLogout();
+              else if (onNavigate) onNavigate("home");
+            }}
+          >
             <img src={logoutIcon} alt="" className="mp-lc-logout-icon" />
             <span>Déconnexion</span>
           </button>
