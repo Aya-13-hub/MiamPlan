@@ -11,7 +11,10 @@ function App() {
   // خطوات استعادة كلمة المرور: 'email' | 'code' | 'password' | 'done'
   const [resetStep, setResetStep] = useState('email');
 
-  const [isLogin, setIsLogin] = useState(true);
+  // /login?mode=signup ouvre directement l'onglet Inscription
+  const [isLogin, setIsLogin] = useState(
+    () => new URLSearchParams(window.location.search).get('mode') !== 'signup'
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
