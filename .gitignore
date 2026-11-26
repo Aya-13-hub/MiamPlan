@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 pycache/
 *.py[cod]
 bdd/db.sqlite3
 venv/
-=======
 # Logs
 logs
 *.log
@@ -28,4 +26,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
->>>>>>> origin/main
