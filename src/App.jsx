@@ -3,9 +3,10 @@ import './App.css';
 import logo from './logo.png';
 import salad from './salad.png';
 import topVector from './Vector.png';
+import AdminDashboard from './AdminDashboard';
 
 function App() {
-  // 'auth' لصفحة Connexion / Inscription، و 'reset' لمسار استعادة كلمة المرور
+  // 'auth' لصفحة Connexion / Inscription، و 'reset' لمسار استعادة كلمة المرور، و 'admin' لفضاء المدير
   const [screenMode, setScreenMode] = useState('auth');
   // خطوات استعادة كلمة المرور: 'email' | 'code' | 'password' | 'done'
   const [resetStep, setResetStep] = useState('email');
@@ -34,6 +35,8 @@ function App() {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
+  const [loginError, setLoginError] = useState('');
+
   const codeInputsRef = useRef([]);
 
   const openForgotPassword = () => {
@@ -53,6 +56,16 @@ function App() {
   const backToLogin = () => {
     setIsLogin(true);
     setScreenMode('auth');
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      setLoginError("Renseignez l'adresse e-mail et le mot de passe.");
+      return;
+    }
+    // TODO : connexion des utilisateurs normaux via l'API Django
+    setLoginError('');
   };
 
   const handleSendResetLink = (e) => {
@@ -129,10 +142,32 @@ function App() {
     setResetStep('done');
   };
 
+  // فضاء المدير
+  if (screenMode === 'admin') {
+    return <AdminDashboard onLogout={backToLogin} />;
+  }
+
   return (
     <div className="page-wrapper">
-      {/* الرسمة الجانبية العلوية */}
-      <img src={topVector} alt="" className="top-vector-img" />
+      {/* الرسمة الجانبية العلوية: تظهر فقط في صفحة استعادة كلمة المرور */}
+      {screenMode === 'reset' && (
+        <img src={topVector} alt="" className="top-vector-img" />
+      )}
+
+      {/* أيقونة الدخول إلى فضاء المدير */}
+      {screenMode === 'auth' && (
+        <button
+          type="button"
+          className="admin-access-btn"
+          onClick={() => setScreenMode('admin')}
+          aria-label="Espace administrateur"
+        >
+          <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            <path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6l8-3z" />
+            <path d="M9 12l2 2 4-4" />
+          </svg>
+        </button>
+      )}
 
       {screenMode === 'auth' ? (
         <>
@@ -181,7 +216,7 @@ function App() {
                     <p className="card-subtitle">Connectez-vous pour accéder à votre espace.</p>
                   </div>
 
-                  <form onSubmit={(e) => e.preventDefault()} autoComplete="off">
+                  <form onSubmit={handleLogin} autoComplete="off">
                     <div className="form-group">
                       <div className="input-wrapper">
                         <svg className="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -239,6 +274,8 @@ function App() {
                       </button>
                     </div>
 
+                    {loginError && <p className="reset-error" style={{ marginBottom: '0.6rem' }}>{loginError}</p>}
+
                     <button type="submit" className="submit-btn">
                       <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
@@ -265,6 +302,7 @@ function App() {
                       Inscrivez-vous
                     </span>
                   </div>
+
                 </div>
               ) : (
                 <div className="form-content">
